@@ -1,8 +1,12 @@
 import Rover from './rover';
-import { simpleCommands } from './data/test-data';
+import {
+  simpleCommands,
+  solarRadiationCorruptedCommands
+} from './data/test-data';
 
 // Extract grid size:
-const gridSize = simpleCommands.match(/\d\d\n/g).reduce((accum, vals) => {
+// @TODO: if a descernable gridSize does not exaist in the very first line, then we stop everything. Critical failure. Conservative, yes - but we're controlling rovers on mars, so a failure of this kind is unacceptable.
+const gridSize = solarRadiationCorruptedCommands.match(/\d\d\n/g).reduce((accum, vals) => {
   accum.push(...vals.split('').reduce((arr, val) => {
     val !== "\n" && arr.push(parseInt(val));
     return arr;
@@ -13,8 +17,8 @@ const gridSize = simpleCommands.match(/\d\d\n/g).reduce((accum, vals) => {
 
 // match each rover's command sequence and start position:
 // /\d\d\s[N|E|S|W]\n[L|M|R]+/g
-const rovers = simpleCommands
-  .match(/\d\d\s[N|E|S|W]\n[L|M|R]+/g)
+const rovers = solarRadiationCorruptedCommands
+  .match(/\d\d\s[N|E|S|W]\n[L|M|R]+\n/g)
   .reduce((arr, match) => {
     arr.push(new Rover(match));
     return arr;

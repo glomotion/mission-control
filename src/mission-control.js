@@ -1,40 +1,51 @@
 import Rover from './rover';
+import statusEnums from './status-enums';
 
 export default class MissionControl {
   constructor({ ...props }) {
     this.location = props.location;
+    this.status = { current: statusEnums['SUCCESS'] };
+    this.extractGridCoords(props.commandData);
+    this.createRovers(props.commandData);
+  }
 
-    // Extract grid size:
-    // @TODO gridsize should be an object with x and y, not an array
-    const gridCoords = props.commandData.match(/^\d\d\n/g);
+  // Extract grid size:
+  extractGridCoords(input) {
+    const gridCoords = input.match(/^\d\d\n/g);
     if (gridCoords) {
-      this.gridSize = gridCoords.reduce((accum, vals) => {
-        accum.push(...vals.split('').reduce((arr, val) => {
-          val !== "\n" && arr.push(parseInt(val));
-          return arr;
-        }, []));
-        return accum;
-      }, []);
+      const arr = gridCoords[0].split('');
+      this.gridSize = { w: parseInt(arr[0]), h: parseInt(arr[1]) };
     } else {
 
       // If a descernable gridSize does not exaist in the very first line of
       // the input data, then we stop everything.
       // Critical failure. Yes it's quite conservative - but we're controlling
       // rovers on mars, thus a failure of this kind is unacceptable.
-      console.log('Critical failure!!');
+      console.error('Critical failure!');
+      this.status = {
+        valid: statusEnums['CRITICAL_FAILURE'],
+        details: `Critical Failure! CommandData does not begin with valid GridSize data.`,
+      };
     }
+  }
 
-    // Match each rover's basic start position, orientation and
-    // command sequence
-    this.rovers = props.commandData
-      .match(/\d\d\s[N|E|S|W]\n?\D+/g)
-      .reduce((arr, match) => {
-        arr.push(new Rover({ initData: match }));
-        return arr;
-      }, []);
+  // Match each rover's basic start position, orientation
+  // and command sequence
+  createRovers(input) {
+    this.rovers = input.match(/\d\d\s[N|E|S|W]\n?\D+/g).reduce((arr, match) => {
+      arr.push(new Rover({ initData: match }));
+      return arr;
+    }, []);
   }
 
   deployRovers() {
+
+    // If mission control has already encountered a Critical Error
+    if (this.status.current === statusEnums['CRITICAL_FAILURE']) {
+      console.error(`Uh ${this.location}, we've had a problem.
+      Details: ${this.status.details}`)
+      return;
+    }
 
     // Excecute all rover command sequences and test for viability at each step
     this.rovers.forEach((rover, i) => {
@@ -46,11 +57,9 @@ export default class MissionControl {
           rover.commitState({ ...newState });
         } else {
 
-          // Kill while and throw error:
+          // Kill while loop and throw error:
           roverIsViable = false;
-          console.error(`Uh ${this.location}, we've had a problem.
-  Rover: ${i} has attempted to perform an invalid command
-  Details: ${viability.reason}`);
+          rover.markInvalid({ reason: viability.reason });
         }
       }
     });
@@ -58,37 +67,32 @@ export default class MissionControl {
     this.printFinalPositions();
   }
 
-  printFinalPositions() {
-    let output = '';
-    this.rovers.forEach(rover => {
-      output += `${rover.position.x} ${rover.position.y} ${rover.orientation} \n`;
-    });
-    output += '==========';
-    console.log(output);
-    return output;
-  }
-
   checkViability({ newState, i }) {
-    const viability = {};
+    const viability = { valid: true };
     if (newState.position) {
 
       // 1 - check if the move puts the over out of bounds:
       if (this.checkOutOfBounds({ ...newState.position })) {
         Object.assign(viability, {
-          valid: false, reason: `Current command moves the rover outside bounds`,
+          valid: false,
+          reason: `Commands contain a directive that moves the rover outside bounds`,
         });
+        this.status = {
+          current: statusEnums['PARTIAL_FAILURE'],
+          details: viability.reason,
+        };
 
       // 2 - check if the move puts the rover into the same square as any other rovers:
       } else if (this.checkCollisionCourse({ ...newState, roverIndex: i })) {
         Object.assign(viability, {
-          valid: false, reason: `Current command would cause rovers to collide`,
+          valid: false,
+          reason: `Commands contain a directive that would cause rovers to collide`,
         });
-      } else {
-        viability.valid = true;
+        this.status = {
+          current: statusEnums['PARTIAL_FAILURE'],
+          details: viability.reason,
+        };
       }
-
-    } else {
-      viability.valid = true;
     }
 
     return viability;
@@ -108,13 +112,38 @@ export default class MissionControl {
   }
 
   checkOutOfBounds({ x, y }) {
-    if (x > this.gridSize[0] || x < 0) {
-      return true;
-    } else if (y > this.gridSize[1] || y < 0) {
-      return true;
-    } else {
-      return false;
+    let outOfBounds = false;
+    if (x > this.gridSize.w || x < 0) {
+      outOfBounds = true;
+    } else if (y > this.gridSize.h || y < 0) {
+      outOfBounds = true;
     }
+    return outOfBounds;
+  }
+
+  printFinalPositions() {
+    let output = ``;
+    switch (this.status.current) {
+      case statusEnums['SUCCESS']:
+        this.rovers.forEach(rover => {
+          output += `${rover.position.x} ${rover.position.y} ${rover.orientation} \n`;
+        });
+        break;
+
+      case statusEnums['PARTIAL_FAILURE']:
+        this.rovers.forEach(rover => {
+          output += `${rover.position.x} ${rover.position.y} ${rover.orientation} `
+          if (rover.status.current === 2) {
+            output += `- Rover is INVALID. ${rover.status.details}`;
+          }
+          output += ` \n`;
+        });
+        break;
+    }
+
+    output += '==========';
+    console.log(output);
+    return output;
   }
 }
 

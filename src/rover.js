@@ -1,4 +1,5 @@
 import Cardinals from './cardinals';
+import statusEnums from './status-enums';
 
 export default class Rover {
   constructor({ ...props }) {
@@ -8,6 +9,7 @@ export default class Rover {
     this.commands = [];
     this.position = {};
     this.orientation = null;
+    this.status = { current: statusEnums['SUCCESS'] };
 
     this.ingestStartingPosition(props.initData);
     this.ingestCommandSequence(props.initData);
@@ -15,9 +17,9 @@ export default class Rover {
 
   // INGEST starting coords and orientation:
   ingestStartingPosition(input) {
-    const coords = input.match(/\d\d\s[N|E|S|W]+/g)[0];
+    const coords = input.match(/\d\d\s[N|E|S|W]+/g);
     if (coords) {
-      const arr = coords.split('');
+      const arr = coords[0].split('');
       this.position = { x: parseInt(arr[0]), y: parseInt(arr[1]) };
       this.orientation = arr[3].toUpperCase();
     }
@@ -39,7 +41,8 @@ export default class Rover {
     if (commands && commands[0].length === preParsedCommand.length) {
       this.commands = commands[0].split('').map(c => c.toUpperCase());
     } else {
-      console.error('invalid command codes found!');
+      this.status.current = statusEnums['PARTIAL_FAILURE'];
+      this.status.details = `Rover contains invalid command codes.`;
     }
   }
 
@@ -64,6 +67,14 @@ export default class Rover {
         // do something in here:
         break;
     }
+  }
+
+  // Mark rover with invalid status:
+  markInvalid({ reason }) {
+    this.status = {
+      current: statusEnums['PARTIAL_FAILURE'],
+      details: reason,
+    };
   }
 
   // Commit command to state:

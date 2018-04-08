@@ -17,7 +17,7 @@ export const twoRoversOneCommand = `55
 12 E
 MMRMMRMRRM`
 
-export const simpleCommands = `55
+export const brokenCommands = `55
 11 N
 MMRMMRMRRM
 33 E

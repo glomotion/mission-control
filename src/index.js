@@ -1,7 +1,7 @@
 import MissionControl from './mission-control';
 import {
   startCommands,
-  simpleCommands,
+  brokenCommands,
   solarRadiationCorruptedCommands,
   testForCollisionCommands,
   twoRoversOneCommand,
@@ -9,9 +9,10 @@ import {
 } from './data/test-data';
 
 const housten = new MissionControl({
-  commandData: startCommands,
+  commandData: brokenCommands,
   location: 'Housten',
 });
 
+// Begin the deployment of rovers at will!
 housten.deployRovers();
 

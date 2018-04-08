@@ -86,9 +86,11 @@ export default class MissionControl {
 
   checkViability({ newState, i }) {
     const viability = { valid: true };
+
+    // Only moves where the position changes, need to be evaluated for validity.
     if (newState.position) {
 
-      // 1 - check if the move puts the over out of bounds:
+      // 1 - check if the move puts the rover out of bounds:
       if (this.checkOutOfBounds({ ...newState.position })) {
         Object.assign(viability, {
           valid: false,

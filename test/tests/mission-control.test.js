@@ -35,7 +35,6 @@ test('Creation of valid Rovers', () => {
 
 test('Correct deployment of Rovers, when data is valid', () => {
   housten.deployRovers();
-
   expect(housten.rovers[0].state.position).toEqual({ x: 1, y: 3 });
   expect(housten.rovers[0].state.orientation).toBe('N');
   expect(housten.rovers[1].state.position).toEqual({ x: 5, y: 1 });
@@ -44,6 +43,10 @@ test('Correct deployment of Rovers, when data is valid', () => {
 
 test('Correct output of final data', () => {
   expect(housten.printFinalPositions()).toBe(`13 N\n51 E\n==========`);
+});
+
+test('Viability check correctly fails', () => {
+
 });
 
 

@@ -23,10 +23,12 @@ export default class Rover {
     }
   }
 
-  // INGEST commands sequence:
-    // - NOTE, if any part of the command sequence is corrupted, then the whole rover's commands
-    // are left empty - as we do not want to move a rover unless we have 100% valid move data
-    // (avoids erronerously leaving a rover in a position which blocks other rovers from moving)
+  /*
+    INGEST commands sequence:
+    - NOTE, if any part of the command sequence is corrupted, then the whole rover's commands
+    are left empty - as we do not want to move a rover unless we have 100% valid move data
+    (avoids erronerously leaving a rover in a position which blocks other rovers from moving)
+  */
   ingestCommandSequence(input) {
     const preParsedCommand = input.split('\n')
       .filter(itm => itm !== "")

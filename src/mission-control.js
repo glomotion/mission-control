@@ -139,11 +139,11 @@ export default class MissionControl {
   printFinalPositions() {
     let output = ``;
     this.rovers.forEach(rover => {
-      output += `${rover.state.position.x} ${rover.state.position.y} ${rover.state.orientation} `
+      output += `${rover.state.position.x}${rover.state.position.y} ${rover.state.orientation}`
       if (rover.state.status === statusEnums['CRITICAL_FAILURE']) {
         output += `- Rover is INVALID. ${rover.state.details}`;
       }
-      output += ` \n`;
+      output += `\n`;
     });
 
     output += '==========';

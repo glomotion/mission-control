@@ -1,7 +1,14 @@
 import Rover from './rover';
 import statusEnums from './status-enums';
 
+/** Class representing a rover. */
 export default class MissionControl {
+
+  /**
+   * Create a MissionControl instance
+   * @property {object}  props
+   * @property {string}  props.initData - example: "12 N \n LMLMLMLMM"
+   */
   constructor({ ...props }) {
     this.location = props.location;
     this.state = { status: statusEnums['SUCCESS'] };
@@ -46,11 +53,12 @@ export default class MissionControl {
       return;
     }
 
-    // Excecute all rover command sequences, one rover at a time - starting with the first
+    // Excecute all rover command sequences, one rover at a time
     this.rovers.forEach((rover, i) => {
       let roverIsViable = true;
 
-      // Step through current rover's entire command sequence, checking each step as we go
+      // Step through current rover's entire command sequence,
+      // checking each step as we go
       while (rover.commands.length !== 0 && roverIsViable) {
         const newState = rover.getNextState();
 
@@ -60,17 +68,19 @@ export default class MissionControl {
           rover.commitState({ ...newState });
         } else {
 
-          // Found a problem with the Rover's commands, so stop here.
-          // This is being conservative. But when a rover excutes an invalid command,
-          // it will mark itself as invalid and move itself back to it's starting position
-          // and orientation. No further commands are to be executed by this rover.
+          // We found a problem with the Rover's commands, so stop here.
+          // This might be being a little conservative -
+          // but when a rover excutes an invalid command,
+          // it will mark itself as invalid and move itself back to it's starting
+          // position and orientation. No further commands are to be executed
+          // by this rover.
           roverIsViable = false;
           rover.markInvalid({ reason: viability.reason });
         }
       }
     });
 
-//Bec: finished moving all the rovers
+    //Bec: finished moving all the rovers
     this.printFinalPositions();
   }
 
@@ -84,7 +94,6 @@ export default class MissionControl {
           valid: false,
           reason: `Commands contain a directive that moves the rover outside bounds`,
         });
-        console.log(this.state);
         this.state.status = statusEnums['PARTIAL_FAILURE'];
         this.state.details = viability.reason;
 
@@ -104,7 +113,8 @@ export default class MissionControl {
 
   checkCollisionCourse({ position, roverIndex }) {
     let collisionDetected = false;
-    //Bec:check no rover is already in this position
+
+    // Bec:check no rover is already in this position
     this.rovers.forEach((rover, i) => {
       if (roverIndex !== i
         && position.x === rover.state.position.x
@@ -129,7 +139,6 @@ export default class MissionControl {
   printFinalPositions() {
     let output = ``;
     this.rovers.forEach(rover => {
-      // console.log(rover.state);
       output += `${rover.state.position.x} ${rover.state.position.y} ${rover.state.orientation} `
       if (rover.state.status === statusEnums['CRITICAL_FAILURE']) {
         output += `- Rover is INVALID. ${rover.state.details}`;

@@ -1,9 +1,15 @@
 import Cardinals from './cardinals';
 import statusEnums from './status-enums';
 
+/** Class representing a rover. */
 export default class Rover {
+
+  /**
+   * Create a Rover instance
+   * @property {object}  props
+   * @property {string}  props.initData example: "12 N \n LMLMLMLMM"
+   */
   constructor({ ...props }) {
-    // example props.initData: "12 N \n LMLMLMLMM"
 
     // The basic anotomy of a rover:
     this.commands = [];
@@ -15,7 +21,9 @@ export default class Rover {
     this.ingestCommandSequence(props.initData);
   }
 
-  // INGEST starting coords and orientation:
+  /**
+   * INGEST starting coords and orientation:
+   */
   ingestStartingPosition(input) {
     const coords = input.match(/\d\d\s[N|E|S|W]+/g);
     if (coords) {

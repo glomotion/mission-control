@@ -7,9 +7,9 @@ export default class Rover {
 
     // The basic anotomy of a rover:
     this.commands = [];
-    this.position = {};
-    this.orientation = null;
-    this.status = { current: statusEnums['SUCCESS'] };
+    this.startPosition = {};
+    this.startOrientation = null;
+    this.state = { status: statusEnums['SUCCESS'] };
 
     this.ingestStartingPosition(props.initData);
     this.ingestCommandSequence(props.initData);
@@ -20,9 +20,12 @@ export default class Rover {
     const coords = input.match(/\d\d\s[N|E|S|W]+/g);
     if (coords) {
       const arr = coords[0].split('');
-      this.position = { x: parseInt(arr[0]), y: parseInt(arr[1]) };
-      this.orientation = arr[3].toUpperCase();
+      this.startPosition = { x: parseInt(arr[0]), y: parseInt(arr[1]) };
+      this.state.position = { ...this.startPosition };
+      this.state.orientation = this.startOrientation = arr[3].toUpperCase();
     }
+
+    // Bec: what about an else here? can that happen? explain?
   }
 
   /*
@@ -41,8 +44,11 @@ export default class Rover {
     if (commands && commands[0].length === preParsedCommand.length) {
       this.commands = commands[0].split('').map(c => c.toUpperCase());
     } else {
-      this.status.current = statusEnums['PARTIAL_FAILURE'];
-      this.status.details = `Rover contains invalid command codes.`;
+
+      // To avoid rovers getting in another rover's way, if a rover does
+      // not successfully conduct all of it's commands - we keep it at it's start position
+      this.state.status = statusEnums['CRITICAL_FAILURE'];
+      this.state.details = `Rover contains invalid command codes.`;
     }
   }
 
@@ -52,13 +58,15 @@ export default class Rover {
     switch (step) {
       case 'M':
         return {
-          position: Cardinals[this.orientation].move({ ...this.position })
+          position: Cardinals[this.state.orientation].move({
+            ...this.state.position
+          }),
         };
         break;
 
       case 'L':
       case 'R':
-        return { orientation: Cardinals[this.orientation][step] };
+        return { orientation: Cardinals[this.state.orientation][step] };
         break;
 
       default:
@@ -70,15 +78,19 @@ export default class Rover {
   }
 
   // Mark rover with invalid status:
+  // When a rover is marked invalid, it knows to reset it's
+  // position back to it's original starting position and orientation
   markInvalid({ reason }) {
-    this.status = {
-      current: statusEnums['PARTIAL_FAILURE'],
-      details: reason,
-    };
+    this.state.status = statusEnums['CRITICAL_FAILURE'];
+    this.state.details = reason;
+    this.state.position = this.startPosition;
+    this.state.orientation = this.startOrientation;
   }
 
   // Commit command to state:
   commitState({ ...props }) {
-    return Object.assign(this, props);
+    let { position, orientation } = props;
+    if (position) this.state.position = position;
+    if (orientation) this.state.orientation = orientation;
   }
 }

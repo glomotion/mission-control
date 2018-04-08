@@ -4,7 +4,7 @@ import statusEnums from './status-enums';
 export default class MissionControl {
   constructor({ ...props }) {
     this.location = props.location;
-    this.status = { current: statusEnums['SUCCESS'] };
+    this.state = { status: statusEnums['SUCCESS'] };
     this.extractGridCoords(props.commandData);
     this.createRovers(props.commandData);
   }
@@ -17,19 +17,18 @@ export default class MissionControl {
       this.gridSize = { w: parseInt(arr[0]), h: parseInt(arr[1]) };
     } else {
 
-      // If a descernable gridSize does not exaist in the very first line of
+      // If a descernable gridSize does not exist in the very first line of
       // the input data, then we stop everything.
       // Critical failure. Yes it's quite conservative - but we're controlling
       // rovers on mars, thus a failure of this kind is unacceptable.
       console.error('Critical failure!');
-      this.status = {
-        valid: statusEnums['CRITICAL_FAILURE'],
-        details: `Critical Failure! CommandData does not begin with valid GridSize data.`,
-      };
+      this.state.status = statusEnums['CRITICAL_FAILURE'];
+      this.state.details = `Critical Failure!
+      CommandData does not begin with valid GridSize data.`;
     }
   }
 
-  // Match each rover's basic start position, orientation
+  // Extract each rover's basic start position, orientation
   // and command sequence
   createRovers(input) {
     this.rovers = input.match(/\d\d\s[N|E|S|W]\n?\D+/g).reduce((arr, match) => {
@@ -41,29 +40,37 @@ export default class MissionControl {
   deployRovers() {
 
     // If mission control has already encountered a Critical Error
-    if (this.status.current === statusEnums['CRITICAL_FAILURE']) {
+    if (this.state.status === statusEnums['CRITICAL_FAILURE']) {
       console.error(`Uh ${this.location}, we've had a problem.
-      Details: ${this.status.details}`)
+      Details: ${this.state.details}`)
       return;
     }
 
-    // Excecute all rover command sequences and test for viability at each step
+    // Excecute all rover command sequences, one rover at a time - starting with the first
     this.rovers.forEach((rover, i) => {
       let roverIsViable = true;
+
+      // Step through current rover's entire command sequence, checking each step as we go
       while (rover.commands.length !== 0 && roverIsViable) {
         const newState = rover.getNextState();
+
+        // Bec: Check next move is valid before we commit it
         const viability = this.checkViability({ newState, i });
         if (viability.valid) {
           rover.commitState({ ...newState });
         } else {
 
-          // Kill while loop and throw error:
+          // Found a problem with the Rover's commands, so stop here.
+          // This is being conservative. But when a rover excutes an invalid command,
+          // it will mark itself as invalid and move itself back to it's starting position
+          // and orientation. No further commands are to be executed by this rover.
           roverIsViable = false;
           rover.markInvalid({ reason: viability.reason });
         }
       }
     });
 
+//Bec: finished moving all the rovers
     this.printFinalPositions();
   }
 
@@ -77,10 +84,9 @@ export default class MissionControl {
           valid: false,
           reason: `Commands contain a directive that moves the rover outside bounds`,
         });
-        this.status = {
-          current: statusEnums['PARTIAL_FAILURE'],
-          details: viability.reason,
-        };
+        console.log(this.state);
+        this.state.status = statusEnums['PARTIAL_FAILURE'];
+        this.state.details = viability.reason;
 
       // 2 - check if the move puts the rover into the same square as any other rovers:
       } else if (this.checkCollisionCourse({ ...newState, roverIndex: i })) {
@@ -88,10 +94,8 @@ export default class MissionControl {
           valid: false,
           reason: `Commands contain a directive that would cause rovers to collide`,
         });
-        this.status = {
-          current: statusEnums['PARTIAL_FAILURE'],
-          details: viability.reason,
-        };
+        this.state.status = statusEnums['PARTIAL_FAILURE'];
+        this.state.details = viability.reason;
       }
     }
 
@@ -100,10 +104,11 @@ export default class MissionControl {
 
   checkCollisionCourse({ position, roverIndex }) {
     let collisionDetected = false;
+    //Bec:check no rover is already in this position
     this.rovers.forEach((rover, i) => {
       if (roverIndex !== i
-        && position.x === rover.position.x
-        && position.y === rover.position.y) {
+        && position.x === rover.state.position.x
+        && position.y === rover.state.position.y) {
 
         collisionDetected = true;
       }
@@ -123,23 +128,14 @@ export default class MissionControl {
 
   printFinalPositions() {
     let output = ``;
-    switch (this.status.current) {
-      case statusEnums['SUCCESS']:
-        this.rovers.forEach(rover => {
-          output += `${rover.position.x} ${rover.position.y} ${rover.orientation} \n`;
-        });
-        break;
-
-      case statusEnums['PARTIAL_FAILURE']:
-        this.rovers.forEach(rover => {
-          output += `${rover.position.x} ${rover.position.y} ${rover.orientation} `
-          if (rover.status.current === 2) {
-            output += `- Rover is INVALID. ${rover.status.details}`;
-          }
-          output += ` \n`;
-        });
-        break;
-    }
+    this.rovers.forEach(rover => {
+      // console.log(rover.state);
+      output += `${rover.state.position.x} ${rover.state.position.y} ${rover.state.orientation} `
+      if (rover.state.status === statusEnums['CRITICAL_FAILURE']) {
+        output += `- Rover is INVALID. ${rover.state.details}`;
+      }
+      output += ` \n`;
+    });
 
     output += '==========';
     console.log(output);

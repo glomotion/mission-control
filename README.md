@@ -10,9 +10,9 @@ $ yarn install
 
 ## Run:
 ```bash
-$ yarn demo # boots up the app using a demo text file for data input
+$ yarn demo # Startup the app using a demo text file for data input
 # or
-$ FILENAME=[reference filename here] yarn start # boot up the app using your own text file input
+$ FILENAME=[reference filename here] yarn start # Startup the app using your own text file input
 ```
 
 ## Technical assumptions:

@@ -1,4 +1,4 @@
-import Cardinals from './cardinals';
+import cardinals from './cardinals';
 import statusEnums from './status-enums';
 
 /** Class representing a Mars Rover. */
@@ -77,14 +77,14 @@ export default class Rover {
     const nextState = {};
     switch (step) {
       case 'M':
-        nextState.position = Cardinals[this.state.orientation].move({
+        nextState.position = cardinals[this.state.orientation].move({
           ...this.state.position
         });
         break;
 
       case 'L':
       case 'R':
-        nextState.orientation = Cardinals[this.state.orientation][step];
+        nextState.orientation = cardinals[this.state.orientation][step];
         break;
     }
 

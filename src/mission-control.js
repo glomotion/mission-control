@@ -6,15 +6,16 @@ export default class MissionControl {
 
   /**
    * Create a MissionControl instance
-   * @property {Object}  props
-   * @property {String}  props.initData -
+   * @property {String}  commandData
    *   @example: "12 N \n LMLMLMLMM"
+   * @property {String}  [location] - The name/location of the control center.
+   * Used in error messaging.
    */
-  constructor({ ...props }) {
-    this.location = props.location;
+  constructor({ commandData, location }) {
+    this.location = location ? location : 'NASA';
     this.state = { status: statusEnums['SUCCESS'] };
-    this.extractGridCoords(props.commandData);
-    this.createRovers(props.commandData);
+    this.extractGridCoords(commandData);
+    this.createRovers(commandData);
   }
 
   /**

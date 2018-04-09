@@ -10,13 +10,13 @@ export default class Rover {
    * @property {string}  props.initData
    *   @example: "12 N \n LMLMLMLMM"
    */
-  constructor({ ...props }) {
+  constructor({ initData }) {
     this.commands = [];
     this.startPosition = {};
     this.startOrientation = null;
     this.state = { status: statusEnums['SUCCESS'] };
-    this.ingestStartingPosition(props.initData);
-    this.ingestCommandSequence(props.initData);
+    this.ingestStartingPosition(initData);
+    this.ingestCommandSequence(initData);
   }
 
   /**
@@ -98,8 +98,7 @@ export default class Rover {
    * @NOTE: When a Rover is marked invalid, it knows to reset it's position
    * back to it's original starting position and orientation
    */
-  markInvalid({ ...props }) {
-    const { reason } = props;
+  markInvalid({ reason }) {
     this.state.status = statusEnums['CRITICAL_FAILURE'];
     if (reason) this.state.details = reason;
     this.state.position = this.startPosition;
@@ -112,8 +111,7 @@ export default class Rover {
    * @property {String} props.[orientation] - The Rover's new orientation
    * @property {Object} props.[position] - The Rover's new position
    */
-  commitState({ ...props }) {
-    const { position, orientation } = props;
+  commitState({ position, orientation }) {
     if (position) this.state.position = position;
     if (orientation) this.state.orientation = orientation;
   }

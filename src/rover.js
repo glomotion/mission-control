@@ -106,8 +106,8 @@ export default class Rover {
   /**
    * Commit an assumed valid mutation to this Rover's state.
    * @property {Object} props - Options to mutate the Rover's state with
-   * @property {String} props[orientation] - The Rover's new orientation
-   * @property {Object} props[position] - The Rover's new position
+   * @property {String} props.[orientation] - The Rover's new orientation
+   * @property {Object} props.[position] - The Rover's new position
    */
   commitState({ ...props }) {
     const { position, orientation } = props;

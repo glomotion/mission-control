@@ -5,17 +5,17 @@ A NodeJS app built for a coding challenge based on the control of Mars Rovers.
 Checkout the repository, and then:
 ```
 $ yarn install
-  // or
+// or
 $ npm i
 ```
 
 # Run:
 ```
 $ yarn demo // boots up the app using a demo text file for data input
- // or
+// or
 $ FILENAME=./src/data/[your text file here] yarn start
 ```
 
 # Technical assumptions:
-1 - moo
-2 - cow
+  1 - moo
+  2 - cow

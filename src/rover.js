@@ -64,8 +64,8 @@ export default class Rover {
   /**
    * @typedef {Object} nextState
    * @property {Object} [position] - Rover's next position
-   * @property {Object} [position].x - x position
-   * @property {Object} [position].y - y position
+   * @property {Object} [position.x] - x position
+   * @property {Object} [position.y] - y position
    * @property {String} [orientation] - Rover's next orientation
    */
   /**

@@ -3,16 +3,16 @@ A NodeJS app built for a coding challenge based on the control of Mars Rovers.
 
 ## Install:
 Checkout the repository, and then:
-```
+```bash
 $ yarn install
 ```
 *Note: yarn is currently being used for scripts inside of package.json. If you prefer npm, simply edit the scripts inside npm to use NPM.
 
 ## Run:
-```
-$ yarn demo // boots up the app using a demo text file for data input
-// or
-$ FILENAME=./src/data/[your text file here] yarn start
+```bash
+$ yarn demo # boots up the app using a demo text file for data input
+# or
+$ FILENAME=[reference filename here] yarn start # boot up the app using your own text file input
 ```
 
 ## Technical assumptions:

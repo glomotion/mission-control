@@ -96,7 +96,7 @@ export default class MissionControl {
   }
 
   /**
-   * @typedef {Object} Viability
+   * @typedef {Object} viability
    * @property {Boolean} valid - Boolean stating the purposed move's validity
    * @property {String} [reason] - Any possible error details
    */
@@ -107,7 +107,7 @@ export default class MissionControl {
    * @property {Object}   [newState.position]
    * @property {Array}    [newState.orientation]
    * @property {Number}   i - Relevant Rover's index integer
-   * @returns {Viability}
+   * @returns {viability}
    */
   checkViability({ newState, i }) {
     const viability = { valid: true };

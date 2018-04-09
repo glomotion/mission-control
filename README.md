@@ -17,6 +17,13 @@ $ yarn demo # Startup the app using a demo text file for data input
 $ FILENAME=[reference filename here] yarn start # Startup the app using your own text file input
 ```
 
+## Tests:
+```bash
+$ yarn test # Run unit tests
+# or
+$ yarn _test # Run unit tests and output coverage
+```
+
 ## Technical assumptions:
 MissionControl has been built with quite opinionated error handling.
 Imagening the high stakes of remotely operating machinery on Mars - I've deliberately been quite conservative with the way that the application errors out / resets upon bad input or conditions.

@@ -49,7 +49,7 @@ describe('Data input is good', () => {
 
 
 /**
- * Tests around bad data input.
+ * Tests with varying bad data input.
 */
 
 describe('Some command sequences will result in collision/out-of-bounds', () => {
@@ -100,8 +100,8 @@ describe('Invalid grid size data', () => {
   test('Set Critical Error status if a valid grid size does not prefix all command data', () => {
     expect(housten.deployRovers()).toBe(false);
     expect(housten.state.status).toBe(statusEnums['CRITICAL_FAILURE']);
-    expect(housten.state.details).toBe(`Critical Failure!\n`
-      + `CommandData does not begin with valid GridSize data.`);
+    expect(housten.state.details).toBe(`Critical Failure!`
+      + ` CommandData does not begin with valid GridSize data.`);
   });
 });
 

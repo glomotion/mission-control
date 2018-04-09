@@ -30,8 +30,8 @@ export default class MissionControl {
       // rovers on mars, thus a failure of this kind is unacceptable.
       console.error('Critical failure!');
       this.state.status = statusEnums['CRITICAL_FAILURE'];
-      this.state.details = `Critical Failure!\n`
-        + `CommandData does not begin with valid GridSize data.`;
+      this.state.details = `Critical Failure!`
+        + ` CommandData does not begin with valid GridSize data.`;
     }
   }
 

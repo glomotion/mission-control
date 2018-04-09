@@ -17,7 +17,7 @@ $ FILENAME=[reference filename here] yarn start # Startup the app using your own
 
 ## Technical assumptions:
 MissionControl has been built with quite opinionated error handling.
-Imagening the high stakes of remotely operating machinery on Mars - I've deliberately been quite conservative with the way that the application errors out upon bad input or conditions.
+Imagening the high stakes of remotely operating machinery on Mars - I've deliberately been quite conservative with the way that the application errors out / resets upon bad input or conditions.
 
 Simply put, if MissionControl has any reason to doubt the success of a deployment, it will cease some/all operations before they cause a Rover to be left in an unplanned position / orientation.
 

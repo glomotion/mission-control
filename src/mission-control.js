@@ -98,7 +98,7 @@ export default class MissionControl {
   /**
    * @typedef {Object} Viability
    * @property {Boolean} valid - Boolean stating the purposed move's validity
-   * @property {String} reason - String containing any possible error details
+   * @property {String} [reason] - Any possible error details
    */
   /**
    * Return the viability of a single Rover command, based on it's current position

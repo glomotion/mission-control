@@ -1,5 +1,6 @@
 # NASA MissionControl App
 A NodeJS app built for a coding challenge based on the control of Mars Rovers.
+[![Build Status](https://travis-ci.org/glomotion/mission-control.svg?branch=master)](https://travis-ci.org/glomotion/mission-control)
 
 ## Install:
 Checkout the repository, and then:

@@ -31,7 +31,7 @@ describe('Data input is good', () => {
     expect(housten.rovers[1].startOrientation).toBe('E');
   });
 
-  test('Correct deployment of Rovers, when data is housten', () => {
+  test('Correct deployment of Rovers, when command data is valid', () => {
     housten.deployRovers();
     expect(housten.state.status).toBe(statusEnums['SUCCESS']);
     expect(housten.rovers[0].state.status).toBe(statusEnums['SUCCESS']);

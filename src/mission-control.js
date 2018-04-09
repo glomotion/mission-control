@@ -6,8 +6,9 @@ export default class MissionControl {
 
   /**
    * Create a MissionControl instance
-   * @property {object}  props
-   * @property {string}  props.initData - example: "12 N \n LMLMLMLMM"
+   * @property {Object}  props
+   * @property {String}  props.initData -
+   *   @example: "12 N \n LMLMLMLMM"
    */
   constructor({ ...props }) {
     this.location = props.location;
@@ -16,7 +17,11 @@ export default class MissionControl {
     this.createRovers(props.commandData);
   }
 
-  // Extract grid size:
+  /**
+   * Extract MissionControl's grid size from input data
+   * @property {String}  input - the full instructions for this instance of MissionControl
+   *   @example: "55\n12 N\nLMLMLMLMM"
+   */
   extractGridCoords(input) {
     const gridCoords = input.match(/^\d\d\n/g);
     if (gridCoords) {
@@ -35,8 +40,11 @@ export default class MissionControl {
     }
   }
 
-  // Extract each rover's basic start position, orientation
-  // and command sequence
+  /**
+   * Extract each rover's basic start position, orientation and command sequence
+   * @property {String}  input - Rover's start / command details.
+   *   @example: "12 N \n LMLMLMLMM"
+   */
   createRovers(input) {
     this.rovers = input.match(/\d\d\s[N|E|S|W]\n?\D+/g).reduce((arr, match) => {
       arr.push(new Rover({ initData: match }));
@@ -44,9 +52,13 @@ export default class MissionControl {
     }, []);
   }
 
+  /**
+   * Execute Rover commands synchronously.
+   */
   deployRovers() {
 
-    // If mission control has already encountered a Critical Error
+    // If mission control has already encountered a Critical Error, then simply return
+    // false and cease operations.
     if (this.state.status === statusEnums['CRITICAL_FAILURE']) {
       console.error(`Uh ${this.location}, we've had a problem.
       Details: ${this.state.details}`)
@@ -62,32 +74,45 @@ export default class MissionControl {
       while (rover.commands.length !== 0 && roverIsViable) {
         const newState = rover.getNextState();
 
-        // Bec: Check next move is valid before we commit it
+        // Check if Rover's next move is valid before we commit it
         const viability = this.checkViability({ newState, i });
         if (viability.valid) {
           rover.commitState({ ...newState });
         } else {
 
           // We found a problem with the Rover's commands, so stop here.
-          // This might be being a little conservative -
-          // but when a rover excutes an invalid command,
-          // it will mark itself as invalid and move itself back to it's starting
-          // position and orientation. No further commands are to be executed
-          // by this rover.
+          // This might be being a little conservative - but when a rover excutes an
+          // invalid command, it will mark itself as invalid and move itself back to
+          // it's starting position and orientation.
+          // No further commands are to be executed by this rover.
           roverIsViable = false;
           rover.markInvalid({ reason: viability.reason });
         }
       }
     });
 
-    //Bec: finished moving all the rovers
+    // Finished moving all the rovers - so print out the final positions of each Rover.
     this.printFinalPositions();
   }
 
+  /**
+   * @typedef {Object} Viability
+   * @property {Boolean} valid - Boolean stating the purposed move's validity
+   * @property {String} reason - String containing any possible error details
+   */
+  /**
+   * Return the viability of a single Rover command, based on it's current position
+   * (and the * position of other rovers)
+   * @property {Object}   newState - Object containing the purposed new state of the Rover
+   * @property {Object}   [newState.position]
+   * @property {Array}    [newState.orientation]
+   * @property {Number}   i - Relevant Rover's index integer
+   * @returns {Viability}
+   */
   checkViability({ newState, i }) {
     const viability = { valid: true };
 
-    // Only moves where the position changes, need to be evaluated for validity.
+    // Only commands where the position changes, need to be evaluated for validity.
     if (newState.position) {
 
       // 1 - check if the move puts the rover out of bounds:
@@ -113,6 +138,14 @@ export default class MissionControl {
     return viability;
   }
 
+  /**
+   * Check the new potential position for a Rover for collision with all other Rovers
+   * @property {Object}   position - Object containing new purposed position of the Rover
+   * @property {Number}   position.x - x value of new Rover position
+   * @property {Number}   position.y - y value of new Rover position
+   * @property {Number}   roverIndex - Relevant Rover's index integer
+   * @returns  {Boolean}  collisionDetected - Will the Rover collide with anothe Rover
+   */
   checkCollisionCourse({ position, roverIndex }) {
     let collisionDetected = false;
 
@@ -128,6 +161,14 @@ export default class MissionControl {
     return collisionDetected;
   }
 
+  /**
+   * Check the new potential position for a Rover for collision with all other Rovers
+   * @property {Object}   position - Object containing new purposed position of the Rover
+   * @property {Number}   position.x - x value of new Rover position
+   * @property {Number}   position.y - y value of new Rover position
+   * @property {Number}   roverIndex - Relevant Rover's index integer
+   * @returns  {Boolean}  collisionDetected - Will the Rover collide with anothe Rover
+   */
   checkOutOfBounds({ x, y }) {
     let outOfBounds = false;
     if (x > this.gridSize.w || x < 0) {
@@ -138,6 +179,11 @@ export default class MissionControl {
     return outOfBounds;
   }
 
+  /**
+   * Print out the final positions of Rovers into the console (and return them)
+   * @returns  {String}  output - All final Rover positions and orientations
+   * (and some extra details if they're erroneous)
+   */
   printFinalPositions() {
     let output = ``;
     this.rovers.forEach(rover => {

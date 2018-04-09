@@ -17,5 +17,6 @@ $ FILENAME=./src/data/[your text file here] yarn start
 ```
 
 # Technical assumptions:
+I've tried to make some judgement calls around error handling etc. Those assumptions are listed below:
   1 - moo
   2 - cow

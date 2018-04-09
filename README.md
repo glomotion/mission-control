@@ -5,8 +5,6 @@ A NodeJS app built for a coding challenge based on the control of Mars Rovers.
 Checkout the repository, and then:
 ```
 $ yarn install
-// or
-$ npm i
 ```
 
 # Run:

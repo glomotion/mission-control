@@ -30,8 +30,8 @@ export default class MissionControl {
       // rovers on mars, thus a failure of this kind is unacceptable.
       console.error('Critical failure!');
       this.state.status = statusEnums['CRITICAL_FAILURE'];
-      this.state.details = `Critical Failure!
-      CommandData does not begin with valid GridSize data.`;
+      this.state.details = `Critical Failure!\n`
+        + `CommandData does not begin with valid GridSize data.`;
     }
   }
 
@@ -50,7 +50,7 @@ export default class MissionControl {
     if (this.state.status === statusEnums['CRITICAL_FAILURE']) {
       console.error(`Uh ${this.location}, we've had a problem.
       Details: ${this.state.details}`)
-      return;
+      return false;
     }
 
     // Excecute all rover command sequences, one rover at a time
@@ -143,7 +143,7 @@ export default class MissionControl {
     this.rovers.forEach(rover => {
       output += `${rover.state.position.x}${rover.state.position.y} ${rover.state.orientation}`
       if (rover.state.status === statusEnums['CRITICAL_FAILURE']) {
-        output += `- Rover is INVALID. ${rover.state.details}`;
+        output += ` - Rover is INVALID. ${rover.state.details}`;
       }
       output += `\n`;
     });

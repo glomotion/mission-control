@@ -1,16 +1,12 @@
-// possible test cases:
-// - grid size is not the very first line of the sequence
-// - invalid grid size
-// - invalid commands
-// - invalid rover start position
-// - two rover orientation/positions in a row, no commands
-// - rover orientation is lowercase (?)
-
 export const startCommands = `55
 12 N
 LMLMLMLMM
 33 E
 MMRMMRMRRM`;
+// Expected Output:
+// 13 N
+// 51 E
+// ==========
 
 export const twoRoversOneCommand = `55
 11 N
@@ -22,12 +18,6 @@ export const brokenCommands = `55
 MMRMMRMRRM
 33 E
 MMRMMRMRRM
-12 N
-LL
-33 E
-MMRMMRMRRMMMM
-21 W
-MRMMRMMMMRRM
 00 E
 RMMRMMMMRRM`;
 

@@ -6,6 +6,7 @@ Checkout the repository, and then:
 ```
 $ yarn install
 ```
+*Note: yarn is currently being used for scripts inside of package.json. If you prefer npm, simply edit the scripts inside npm to use NPM.
 
 # Run:
 ```

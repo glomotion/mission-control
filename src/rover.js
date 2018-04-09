@@ -36,9 +36,11 @@ export default class Rover {
    * INGEST commands sequence into Rover's state
    * @property {String}  input - the full instructions for this instance of Rover
    *   @example: "55\n12 N\nLMLMLMLMM"
-   * @NOTE: if any part of the command sequence is corrupted, then the whole rover's commands
-   * are left empty - as we do not want to move a rover unless we have 100% valid move data
-   * (avoids erronerously leaving a rover in a position which blocks other rovers from moving)
+   * @NOTE: if any part of the command sequence is corrupted, then the whole rover's
+   * commands are left empty - as we do not want to move a rover unless we have 100%
+   * valid move data.
+   * (avoids erronerously leaving a rover in a position which blocks other rovers
+   * from moving)
    */
   ingestCommandSequence(input) {
     const preParsedCommand = input.split('\n')
@@ -51,8 +53,9 @@ export default class Rover {
       this.commands = commands[0].split('').map(c => c.toUpperCase());
     } else {
 
-      // To avoid rovers getting in another rover's way, if a rover does
-      // not successfully conduct all of it's commands - we keep it at it's start position
+      // To avoid a Rovers getting in another's way, command sequences are ignored
+      // if they contains any invalid characters.
+      // The Rover then remains where it begins.
       this.state.status = statusEnums['CRITICAL_FAILURE'];
       this.state.details = `Rover contains invalid command codes.`;
     }

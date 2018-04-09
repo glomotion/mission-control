@@ -149,7 +149,8 @@ export default class MissionControl {
   checkCollisionCourse({ position, roverIndex }) {
     let collisionDetected = false;
 
-    // Bec:check no rover is already in this position
+    // Step through the rovers and check that no rover is already in the
+    // nominated position
     this.rovers.forEach((rover, i) => {
       if (roverIndex !== i
         && position.x === rover.state.position.x

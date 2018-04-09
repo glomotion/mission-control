@@ -8,6 +8,10 @@ import {
 import MissionControl from '../../src/mission-control';
 import statusEnums from '../../src/status-enums';
 
+/**
+ * Tests width good data input.
+*/
+
 describe('Data input is good', () => {
   const housten = new MissionControl({
     commandData: startCommands,
@@ -19,7 +23,8 @@ describe('Data input is good', () => {
     expect(housten.location).toBe('Housten');
   });
 
-  test('Creation of housten Rovers', () => {
+  test('Creation of Rovers', () => {
+    expect(housten.rovers.length).toBe(2);
     expect(housten.rovers[0].startPosition).toEqual({ x: 1, y: 2 });
     expect(housten.rovers[1].startPosition).toEqual({ x: 3, y: 3 });
     expect(housten.rovers[0].startOrientation).toBe('N');
@@ -42,6 +47,7 @@ describe('Data input is good', () => {
   });
 });
 
+
 /**
  * Tests around bad data input.
 */
@@ -52,7 +58,7 @@ describe('Some command sequences will result in collision/out-of-bounds', () => 
     location: 'Housten',
   });
   beforeAll(() => housten.deployRovers());
-  test('Correctly fail certain rovers when commands are readable but erroneous', () => {
+  test('Fail certain rovers when commands are readable but erroneous', () => {
 
     // Expect MissionControl's status to be "PARTIAL_FAILURE"
     expect(housten.state.status).toBe(statusEnums['PARTIAL_FAILURE']);
@@ -80,6 +86,10 @@ describe('Some command sequences will result in collision/out-of-bounds', () => 
     expect(housten.rovers[2].state.position).toEqual(housten.rovers[2].startPosition);
     expect(housten.rovers[2].state.orientation).toBe(housten.rovers[2].startOrientation);
   });
+  test('Printout final data when some Rover commands failed', () => {
+    expect(housten.printFinalPositions()).toMatch(/Rover is INVALID\. Commands contain a directive that would cause rovers to collide/g);
+    expect(housten.printFinalPositions()).toMatch(/Rover is INVALID\. Commands contain a directive that moves the rover outside bound/g);
+  });
 });
 
 describe('Invalid grid size data', () => {
@@ -100,7 +110,7 @@ describe('Two rovers specified with only one command sequence', () => {
     commandData: twoRoversOneCommand,
     location: 'Housten',
   });
-  test('Correctly assign orders to Rovers, when their start positions are parrallel', () => {
+  test('Assign orders to correct Rover, when Rover start positions are parrallel', () => {
     expect(housten.rovers.length).toBe(2);
     expect(housten.rovers[0].commands).toEqual([]);
     expect(housten.rovers[1].commands).toEqual(['M','M','R','M','M','R','M','R','R','M']);

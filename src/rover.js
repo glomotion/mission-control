@@ -101,6 +101,8 @@ export default class Rover {
   markInvalid({ reason }) {
     this.state.status = statusEnums['CRITICAL_FAILURE'];
     if (reason) this.state.details = reason;
+
+    // Reset the Rover to it's start conditions
     this.state.position = this.startPosition;
     this.state.orientation = this.startOrientation;
   }

@@ -86,7 +86,7 @@ describe('Some command sequences will result in collision/out-of-bounds', () => 
     expect(housten.rovers[2].state.position).toEqual(housten.rovers[2].startPosition);
     expect(housten.rovers[2].state.orientation).toBe(housten.rovers[2].startOrientation);
   });
-  test('Printout final data when some Rover commands failed', () => {
+  test('Printout final data with error details when some Rover commands failed', () => {
     expect(housten.printFinalPositions()).toMatch(/Rover is INVALID\. Commands contain a directive that would cause rovers to collide/g);
     expect(housten.printFinalPositions()).toMatch(/Rover is INVALID\. Commands contain a directive that moves the rover outside bound/g);
   });

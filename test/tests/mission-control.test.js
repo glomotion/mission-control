@@ -8,9 +8,6 @@ import {
 import MissionControl from '../../src/mission-control';
 import statusEnums from '../../src/status-enums';
 
-// test cases:
-// - two rover orientation/positions in a row, no commands
-
 describe('Data input is good', () => {
   const housten = new MissionControl({
     commandData: startCommands,

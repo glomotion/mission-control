@@ -21,7 +21,7 @@ I've tried to make some judgement calls around error handling etc. Given the hig
 Simply put, if MissionControl has any reason to doubt the success of a deployment, it will cease some/all operations before they cause a Rover to be left in an unplanned position / orientation.
 
 - If MissionControl does not recieve valid Grid Size coords in the very first line of command input, it will throw "CRITICAL_FAILURE".
-- Due to the likely occassional presence of Solar wind / radiation, some allowance has been made for partial parsing of Rovers / command data - so long as the resulting definitions are 100% valid. This means that MissionControl should be able to extract *valid* commands even if they are surrounded in garbled / corrupted data.
+- Due to the likely occassional presence of Solar wind / radiation, some allowance has been made for partial parsing of Rovers / command data - so long as the resulting definitions are **100% valid**. This means that MissionControl should be able to extract commands even if they are surrounded in garbled / corrupted data.
 - If some Rovers are able to be moved, but others not, MissionControl will still move the valid Rovers, but will reset all erroneously commanded Rovers to their respective start positions & orientations. In that instance, MissionControl will signal "PARTIAL_FAILURE", and state the reason.
 - Rovers cannot drive over each other. So, if a Rover tries to move into a space currently occupied by another Rover, MissionControl will invalidate that Rover, and reset it to it's starting conditions.
 - Rovers cannot drive out of bounds. If a Rover tries to move outside of the defined Grid, MissionControl will invalidate that Rover, and reset it to it's starting conditions.

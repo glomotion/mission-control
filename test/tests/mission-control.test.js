@@ -4,7 +4,7 @@ import {
   solarRadiationCorruptedCommands,
   twoRoversOneCommand,
   invalidGrid
-} from '../../src/data/test-data';
+} from '../../data/test-data';
 import MissionControl from '../../src/mission-control';
 import statusEnums from '../../src/status-enums';
 
@@ -97,7 +97,7 @@ describe('Invalid grid size data', () => {
     commandData: invalidGrid,
     location: 'Housten',
   });
-  test('Set Critical Error status if a valid grid size does not prefix all command data', () => {
+  test('Set Critical Error status if a valid grid size does not precede command data', () => {
     expect(housten.deployRovers()).toBe(false);
     expect(housten.state.status).toBe(statusEnums['CRITICAL_FAILURE']);
     expect(housten.state.details).toBe(`Critical Failure!`
@@ -117,5 +117,16 @@ describe('Two rovers specified with only one command sequence', () => {
   });
 });
 
-
+describe('Extraction of valid Rovers from garbled / corrupted data', () => {
+  const housten = new MissionControl({
+    commandData: solarRadiationCorruptedCommands,
+    location: 'Housten',
+  });
+  test('Find 5 invalid Rovers and 1 valid Rover in garbled data', () => {
+    expect(housten.rovers.length).toBe(5);
+    const validRovers = housten.rovers
+      .filter(rover => rover.state.status === statusEnums["SUCCESS"]);
+    expect(validRovers.length).toBe(1);
+  });
+});
 

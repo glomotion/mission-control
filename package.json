@@ -15,7 +15,7 @@
   "scripts": {
     "babel-node": "babel-node",
     "start": "nodemon --exec yarn babel-node -- ./src/index.js --input=$FILENAME",
-    "demo": "FILENAME=./src/data/demo-textfile.txt yarn start",
+    "demo": "FILENAME=./data/demo-textfile.txt yarn start",
     "_test": "NODE_ENV=test jest --config test/jest.conf.js --coverage",
     "test": "NODE_ENV=test jest --config test/jest.conf.js"
   }

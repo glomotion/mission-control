@@ -10,7 +10,7 @@ import {
   testForCollisionCommands,
   twoRoversOneCommand,
   invalidGrid,
-} from './data/test-data';
+} from '../data/test-data';
 */
 
 fs.readFile(process.env.FILENAME, 'utf8', (err, contents) => {

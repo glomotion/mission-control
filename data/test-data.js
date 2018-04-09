@@ -22,8 +22,7 @@ MMRMMRMRRM
 RMMRMMMMRRM`;
 
 // just 1 rover below is considered "valid" in the following data ...
-export const solarRadiationCorruptedCommands = `jkdshadskjhdasjkhsadkjhdsa
-55
+export const solarRadiationCorruptedCommands = `55
 jkdshadskjhdasjkhsadkjhdsa
 daskj dakjadsh
 1@#$%^&*()

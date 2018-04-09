@@ -33,10 +33,10 @@ export default class MissionControl {
       // the input data, then we stop everything.
       // Critical failure. Yes it's quite conservative - but we're controlling
       // rovers on mars, thus a failure of this kind is unacceptable.
-      console.error('Critical failure!');
       this.state.status = statusEnums['CRITICAL_FAILURE'];
       this.state.details = `Critical Failure!`
         + ` CommandData does not begin with valid GridSize data.`;
+      console.error(this.state.details);
     }
   }
 

@@ -22,5 +22,5 @@ Simply put, if MissionControl has any reason to doubt the success of a deploymen
 
 1. If MissionControl does not recieve valid Grid Size coords in the very first line of command input, it will throw "CRITICAL_ERROR".
 2. If some Rovers are able to be moved, but others not, MissionControl will still move the valid Rovers, but will reset all invalidly commanded Rovers to their respective start position & orientations.
-  ⋅⋅* Rovers cannot drive over each other. Hence, if a Rover tries to move into a space currently occupied by another Rover, MissionControl will invalidate that Rover, and reset it to it's starting conditions.
-  ..* Rovers cannot drive out of bounds. If a Rover tries to move outside of the defined Grid, MissionControl will invalidate that Rover, and reset it to it's starting conditions.
+⋅⋅ Rovers cannot drive over each other. Hence, if a Rover tries to move into a space currently occupied by another Rover, MissionControl will invalidate that Rover, and reset it to it's starting conditions.
+.. Rovers cannot drive out of bounds. If a Rover tries to move outside of the defined Grid, MissionControl will invalidate that Rover, and reset it to it's starting conditions.

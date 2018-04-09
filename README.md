@@ -6,7 +6,7 @@ Checkout the repository, and then:
 ```bash
 $ yarn install
 ```
-*Note: yarn is currently being used for scripts inside of package.json. If you prefer npm, simply edit the scripts inside npm to use NPM.
+*Note: yarn is currently being used for scripts inside of package.json. If you prefer npm, you'll need to edit the "start" script to use "npm run" instead of "yarn".
 
 ## Run:
 ```bash
